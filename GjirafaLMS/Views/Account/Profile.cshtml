@@ -1,0 +1,220 @@
+@inject UserManager<User> userManager;
+@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    var user = @userManager.GetUserAsync(User).Result;
+}
+@model ProfileViewModel
+<div class="container-fluid">
+    <div class="d-sm-flex justify-content-between align-items-center p-3 gradient-primary">
+        <h3>Profile</h3>
+        <div>
+            <a href="/dashboard"><button class="btn btn-light shadow mr-2">Dashboard</button></a>
+            @if(user.Id == Model.user.Id)
+            {
+                <a href="/edit"><button class="btn btn-light shadow">Edit Profile</button></a>
+            }
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-lg-4">
+            <div class="card mb-3">
+                <div class="card-body text-center shadow"><img id="profile-img" class="rounded-circle mb-3 mt-4"
+                        src="@Model.user.ProfileImgUrl" width="160" height="160">
+                    <h3>@Model.user.FirstName @Model.user.LastName</h3>
+                    @if (Model.userRole == "Admin")
+                    {
+                        <small>Admin User</small>
+                    }
+                    else if (Model.userRole == "Instructor")
+                    {
+                        <small>Instructor</small>
+                    }
+                    else
+                    {
+                        <small>Normal User</small>
+                    }
+
+                </div>
+            </div>
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="text-primary font-weight-bold m-0">Progress</h6>
+                </div>
+                <div class="card-body">
+                    @foreach (var course in Model.courses)
+                    {
+                        var result = 0.0;
+                        var counter = 0.0;
+                        foreach (var progress in course.Progresses)
+                        {
+                            if (progress.CompletedByUserId == user.Id && progress.CourseId == course.CourseId)
+                            {
+                                counter++;
+                            }
+                        }
+                        result = Math.Round(((counter / course.Lectures.Count) * 100),2);
+                        if (double.IsNaN(result))
+                        {
+                            result = 0;
+                        }
+                        <h4 class="small font-weight-bold">@course.CourseName<span class="float-right">@result%</span></h4>
+                        <div class="progress mb-4">
+                            <div class="progress-bar bg-danger" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"
+                            style="width: @result%;"><span class="sr-only">@result%</span></div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="row mb-3 d-none">
+                <div class="col">
+                    <div class="card text-white bg-primary shadow">
+                        <div class="card-body">
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <p class="m-0">Peformance</p>
+                                    <p class="m-0"><strong>65.2%</strong></p>
+                                </div>
+                                <div class="col-auto"><i class="fas fa-rocket fa-2x"></i></div>
+                            </div>
+                            <p class="text-white-50 small m-0"><i class="fas fa-arrow-up"></i>&nbsp;5% since last month
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card text-white bg-success shadow">
+                        <div class="card-body">
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <p class="m-0">Peformance</p>
+                                    <p class="m-0"><strong>65.2%</strong></p>
+                                </div>
+                                <div class="col-auto"><i class="fas fa-rocket fa-2x"></i></div>
+                            </div>
+                            <p class="text-white-50 small m-0"><i class="fas fa-arrow-up"></i>&nbsp;5% since last month
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="card shadow mb-3">
+                        <div class="card-header py-3">
+                            <p class="text-primary m-0 font-weight-bold">User Info</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="col">
+                                    <strong>First Name</strong>
+                                    <p class="h6 p-2 mt-2 border border-dark rounded">@Model.user.FirstName</p>
+                                </div>
+                                <div class="col">
+                                    <strong>Last Name</strong>
+                                    <p class="h6 p-2 mt-2 border border-dark rounded">@Model.user.LastName</p>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col">
+                                    <strong>Email</strong>
+                                    <p class="h6 p-2 mt-2 border border-dark rounded">@Model.user.Email</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card shadow">
+                        <div class="card-header py-3">
+                            <p class="text-primary m-0 font-weight-bold">Contact Settings</p>
+                        </div>
+                        <div class="card-body">
+                            <strong>Address</strong></label>
+                            <p class="h6 p-2 mt-2 border border-dark rounded">@Model.user.Address</p>
+                            <div class="form-row">
+                                <div class="col">
+                                    <strong>City</strong>
+                                    <p class="h6 p-2 mt-2 border border-dark rounded">@Model.user.City</p>
+                                </div>
+                                <div class="col">
+                                    <strong>Country</strong>
+                                    <p class="h6 p-2 mt-2 border border-dark rounded">@Model.user.Country</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card shadow mb-5">
+        <div class="card-header py-3 gradient-primary">
+            <p class="text-light m-0 font-weight-bold">Messages</p>
+        </div>
+        <div class="card-body">
+            <div class="mt-3 mb-3">
+        <form asp-action="LeaveMessage" asp-controller="Message" method="POST">
+            <input type="hidden" asp-for="@Model.Post.UserIdFrom" value='@user.Id'>
+            <input type="hidden" asp-for="@Model.Post.UserIdTo" value='@Model.user.Id'>
+            <div>
+                <span asp-validation-for="@Model.Post.PostText"></span>
+                <div class="form-group">
+                    <label asp-for="@Model.Post.PostText"><strong>Leave a message for @Model.user.FirstName</strong></label>
+                    <textarea class="form-control" asp-for="@Model.Post.PostText"></textarea>
+                </div>
+            </div>
+            <div class="clearfix">
+                <input type="submit" value="Leave a Message" class="float-right btn gradient-primary shadow">
+            </div>
+        </form>
+    </div>
+
+    <div>
+            @foreach (var post in Model.Posts)
+            {
+                <div class="pb-2">
+                    <strong>@post.UserFrom.FirstName @post.UserFrom.LastName wrote</strong> <small>- @post.CreatedAt.ToString("MMMM dd, yyyy @ hh:mm tt")</small>
+                </div>
+                <p class="shadow p-3 mb-5 bg-body rounded">@post.PostText</p>
+                @if(post.UserIdFrom == user.Id)
+                {
+                    <div class="clearfix">
+                        <a asp-action="DeletePost" asp-controller="Message" asp-route-postId="@post.PostId" asp-route-userProfileId="@post.UserIdTo"><button class="btn-sm btn-dark float-right shadow">Delete Post</button></a>
+                    </div>
+                }
+                @if(post.Comments.Count > 0){
+                    <div class="shadow p-3 ml-5 mb-5 bg-body rounded">
+                        @foreach (var comment in post.Comments)
+                        {
+                            <div class="pl-3">
+                                <div class="pb-2">
+                                    <strong>@comment.User.FirstName @comment.User.LastName</strong> <small>- @comment.CreatedAt.ToString("MMMM dd, yyyy @ hh:mm tt")</small>
+                                </div>
+                                <p>@comment.CommentText</p>
+                            </div>
+                        }
+                        </div>
+                }
+                
+                <div class="pl-3">
+                <form asp-action="PostComment" asp-controller="Message" method="POST">
+                    <input type="hidden" asp-for="@Model.Comment.UserId" value='@user.Id'>
+                    <input type="hidden" asp-for="@Model.Comment.PostId" value='@post.PostId'>
+                    <input type="hidden" asp-for="@Model.Comment.ProfileOf" value='@post.UserIdTo'>
+                    <div>
+                        <span asp-validation-for="@Model.Comment.CommentText"></span>
+                        <div class="form-group">
+                            <strong><label asp-for="@Model.Comment.CommentText"></label></strong>
+                            <textarea class="form-control" asp-for="@Model.Comment.CommentText"></textarea>
+                        </div>
+                    </div>
+                    <div class="clearfix">
+                        <input type="submit" value="Reply" class="float-right btn gradient-primary shadow">
+                    </div>
+                </form>
+                </div>
+            }
+    </div>
+        </div>
+    </div>
+</div>

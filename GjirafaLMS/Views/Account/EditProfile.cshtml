@@ -1,0 +1,79 @@
+@inject UserManager<User> userManager;
+@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    var user = @userManager.GetUserAsync(User).Result;
+}
+@model RegisterViewModel
+<div class="container-fluid">
+    <div class="d-sm-flex justify-content-between align-items-center p-3 gradient-primary">
+        <h3>Profile</h3>
+        <div>
+            <a href="/dashboard"><button class="btn btn-light shadow mr-2">Dashboard</button></a>
+            <a href="/profile/@user.Id"><button class="btn btn-light shadow">Cancel</button></a>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-lg-4">
+            <div class="card mb-3">
+                <div class="card-body text-center shadow"><img id="profile-img" class="rounded-circle mb-3 mt-4"
+                        src="@user.ProfileImgUrl"
+                        width="160" height="160">
+                    <h3>@user.FirstName @user.LastName</h3>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <small>Admin User</small>
+                    }
+                    else if (User.IsInRole("Instructor"))
+                    {
+                        <small>Instructor</small>
+                    }
+                    else
+                    {
+                        <small>Normal User</small>
+                    }
+                </div>
+            </div>
+            <partial name="ChangePasswordPartial" />
+        </div>
+        <div class="col-lg-8">
+            <div class="row mb-3 d-none">
+                <div class="col">
+                    <div class="card text-white bg-primary shadow">
+                        <div class="card-body">
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <p class="m-0">Peformance</p>
+                                    <p class="m-0"><strong>65.2%</strong></p>
+                                </div>
+                                <div class="col-auto"><i class="fas fa-rocket fa-2x"></i></div>
+                            </div>
+                            <p class="text-white-50 small m-0"><i class="fas fa-arrow-up"></i>&nbsp;5% since last month
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card text-white bg-success shadow">
+                        <div class="card-body">
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <p class="m-0">Peformance</p>
+                                    <p class="m-0"><strong>65.2%</strong></p>
+                                </div>
+                                <div class="col-auto"><i class="fas fa-rocket fa-2x"></i></div>
+                            </div>
+                            <p class="text-white-50 small m-0"><i class="fas fa-arrow-up"></i>&nbsp;5% since last month
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <partial name="EditInfoPartial"/>
+                    <partial name="EditLocationPartial"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

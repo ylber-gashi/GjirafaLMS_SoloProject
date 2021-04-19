@@ -1,0 +1,76 @@
+@inject UserManager<User> userManager;
+@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+@model EditCourseViewModel
+<div class="d-sm-flex justify-content-between align-items-center p-3 gradient-primary">
+    <h3>Edit Course</h3>
+    <a href="/dashboard"><button class="btn btn-light">Dashboard</button></a>
+</div>
+<div id="content">
+    <div class="col">
+        <div class="card shadow mb-3">
+            <div class="card-header py-3">
+                <p class="text-primary m-0 font-weight-bold">Edit Course Info</p>
+            </div>
+            <div class="card-body">
+                <form method="POST" asp-action="SaveEdit" asp-controller="Course">
+                    <input type="hidden" asp-for="EditCourse.CourseId" value="@Model.Course.CourseId">
+                    <div class="form-row">
+                        <div class="col">
+                            <span asp-validation-for="EditCourse.CourseName" class="text-danger"></span>
+                            <div class="form-group"><label asp-for="EditCourse.CourseName"><strong>Course Name
+                                    </strong></label><input class="form-control" asp-for="EditCourse.CourseName"
+                                    placeholder="FirstName" value="@Model.Course.CourseName"></div>
+                        </div> 
+                        <div class="col">
+                            <span asp-validation-for="EditCourse.CourseTechnology" class="text-danger"></span>
+                            <div class="form-group"><label asp-for="EditCourse.CourseTechnology"><strong>Techonology</strong></label><input
+                                    class="form-control" asp-for="EditCourse.CourseTechnology" placeholder=".Net" value="@Model.Course.CourseTechnology"></div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <span asp-validation-for="EditCourse.CourseCategory" class="text-danger"></span>
+                            <div class="form-group">
+                                <label asp-for="EditCourse.CourseCategory"><strong>Category</strong></label><br>
+                                <select class="form-select" asp-for="EditCourse.CourseCategory" aria-label="Default select example">
+                                    <option value="BackEnd">Back-End</option>
+                                    <option value="FrontEnd">Front-End</option>
+                                    <option value="FullStack">Full Stack</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <span asp-validation-for="EditCourse.CourseInstructor" class="text-danger"></span>
+                            <div class="form-group"><label asp-for="EditCourse.CourseInstructor"><strong>Course Instructor</strong></label><br>
+                            <select class="form-select" asp-for="EditCourse.CourseInstructor" aria-label="Default select example">
+                                @foreach (var instructor in userManager.GetUsersInRoleAsync("Instructor").Result)
+                                {
+                                    <option value="@instructor.Id">@instructor.FirstName @instructor.LastName</option>
+                                }
+                            </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <span asp-validation-for="EditCourse.CourseImgURL" class="text-danger"></span>
+                            <div class="form-group"><label asp-for="EditCourse.CourseImgURL"><strong>Course Image</strong></label>
+                                <input class="form-control" asp-for="EditCourse.CourseImgURL" placeholder="Image URL" value="@Model.Course.CourseImgURL">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <span asp-validation-for="EditCourse.CourseDescription" class="text-danger"></span>
+                            <div class="form-group"><label asp-for="EditCourse.CourseDescription"><strong>Course
+                                Description</strong></label><textarea class="form-control" asp-for="EditCourse.CourseDescription" placeholder="Description">@Model.Course.CourseDescription</textarea></div>
+                        </div>
+                    </div>
+                    <div class="form-group"><button class="btn btn-primary shadow" type="submit">Save Edit</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

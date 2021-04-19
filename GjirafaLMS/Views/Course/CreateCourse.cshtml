@@ -1,0 +1,87 @@
+@inject UserManager<User> userManager;
+@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+@model Course
+<div class="shadow-sm mb-5">
+    <div class="d-sm-flex justify-content-between align-items-center p-3 gradient-primary">
+        <h3>Create Course</h3>
+        <a href="/dashboard"><button class="btn btn-light shadow">Dashboard</button></a>
+    </div>
+    <div id="content">
+        <div class="col">
+            <div class="card shadow mb-3">
+                <div class="card-header py-3">
+                    <p class="text-primary m-0 font-weight-bold">Course Info</p>
+                </div>
+                <div class="card-body">
+                    <form method="POST" asp-action="CreateCourse" asp-controller="Course">
+                        <div class="form-row">
+                            <div class="col">
+                                <span asp-validation-for="CourseName" class="text-danger"></span>
+                                <div class="form-group"><label asp-for="CourseName"><strong>Course Name
+                                        </strong></label><input class="form-control" asp-for="CourseName"
+                                        placeholder="FirstName"></div>
+                            </div>
+                            <div class="col">
+                                <span asp-validation-for="CourseTechnology" class="text-danger"></span>
+                                <div class="form-group"><label
+                                        asp-for="CourseTechnology"><strong>Techonology</strong></label><input
+                                        class="form-control" asp-for="CourseTechnology" placeholder=".Net"></div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col">
+                                <span asp-validation-for="CourseCategory" class="text-danger"></span>
+                                <div class="form-group">
+                                    <label asp-for="CourseCategory"><strong>Category</strong></label><br>
+                                    <select class="form-select" asp-for="CourseCategory"
+                                        aria-label="Default select example">
+                                        <option value="BackEnd">Back-End</option>
+                                        <option value="FrontEnd">Front-End</option>
+                                        <option value="FullStack">Full Stack</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <span asp-validation-for="CourseInstructorId" class="text-danger"></span>
+                                <div class="form-group"><label asp-for="CourseInstructorId"><strong>Course
+                                            Instructor</strong></label><br>
+                                    <select class="form-select" asp-for="CourseInstructorId"
+                                        aria-label="Default select example">
+                                        @foreach (var instructor in
+                                        userManager.GetUsersInRoleAsync("Instructor").Result)
+                                        {
+                                            <option value="@instructor.Id">@instructor.FirstName @instructor.LastName
+                                            </option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col">
+                                <span asp-validation-for="CourseImgURL" class="text-danger"></span>
+                                <div class="form-group"><label asp-for="CourseImgURL"><strong>Course
+                                            Image</strong></label>
+                                    <input class="form-control" asp-for="CourseImgURL" placeholder="Image URL">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col">
+                                <span asp-validation-for="CourseDescription" class="text-danger"></span>
+                                <div class="form-group"><label asp-for="CourseDescription"><strong>Course
+                                            Description</strong></label><textarea class="form-control"
+                                        asp-for="CourseDescription" placeholder="Description"></textarea></div>
+                            </div>
+                        </div>
+                        <div class="form-group"><button class="btn btn-primary shadow" type="submit">Create
+                                Course</button></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

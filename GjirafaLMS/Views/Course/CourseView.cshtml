@@ -1,0 +1,138 @@
+@inject UserManager<User> userManager;
+@{
+  var user = @userManager.GetUserAsync(User).Result;
+  Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+@model CourseViewModel
+<div class="d-sm-flex justify-content-between align-items-center p-3 gradient-primary">
+  <h3>@Model.Course.CourseName</h3>
+  <div>
+    <a href="/dashboard"><button class="btn btn-light mr-2 shadow">Dashboard</button></a>
+    <a href="/editcourse/@Model.Course.CourseId"><button class="btn btn-light shadow">Edit Course</button></a>
+  </div>
+
+
+</div>
+<div class="bg-white p-3">
+  @foreach (var lecture in Model.Course.Lectures)
+  {
+    <div class="row">
+      <!-- Grid column -->
+    <div class="col-lg-4 col-md-12 mb-4">
+        <!--Modal: Name-->
+      <div class="modal fade" id="modal_@lecture.LectureId" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+        aria-hidden="true">
+          <div class="modal-dialog modal-lg" role="document">
+
+            <!--Content-->
+          <div class="modal-content">
+
+              <!--Body-->
+            <div class="modal-body mb-0 p-0">
+                <div class="embed-responsive embed-responsive-16by9 z-depth-1-half">
+                  <iframe class="embed-responsive-item" src="@lecture.LectureVideoURL" allowfullscreen></iframe>
+                </div>
+              </div>
+
+              <!--Footer-->
+            <div class="modal-footer justify-content-center">
+                <span class="mr-4">@lecture.LectureTitle</span>
+                <button type="button" class="btn btn-outline-primary btn-rounded btn-md ml-4"
+                data-dismiss="modal">Close</button>
+                <form method="POST" asp-action="CompleteLecture" asp-controller="Course">
+                  <input type="hidden" asp-for="@Model.Completed.CompletedLectureId" value="@lecture.LectureId">
+                  <input type="hidden" asp-for="@Model.Completed.CompletedByUserId" value="@user.Id">
+                  <input type="hidden" asp-for="@Model.Completed.CourseId" value="@lecture.CourseId">
+                  <input type="submit" class="btn btn-outline-primary shadow btn-rounded btn-md ml-4" value="Mark as Completed">
+                </form>
+              </div>
+            </div>
+            <!--/.Content-->
+
+        </div>
+        </div>
+        <!--Modal: Name-->
+      <a><img class="img-fluid z-depth-1 shadow" src="@lecture.LectureThumbnailURL" alt="video" data-toggle="modal"
+          data-target="#modal_@lecture.LectureId"></a>
+      </div>
+      <div class="col-lg-8 col-md-12 mb-4">
+        <div class="p-3">
+          <h3><a href="" data-toggle="modal" data-target="#modal_@lecture.LectureId">@lecture.LectureTitle</a></h3>
+          <p>@lecture.LectureDescription</p>
+          <small>@lecture.CreatedAt.ToString("dddd, dd MMMM yyyy")</small>
+        </div>
+        @foreach (var completed in lecture.CompletedLectures)
+        {
+          if (completed.CompletedLectureId == lecture.LectureId && completed.CompletedByUserId == user.Id)
+          {
+            <div class="clearfix">
+              <i class="fas fa-check float-right bg-success p-2 text-light shadow rounded"> Completed</i>
+            </div>
+          }
+        }
+
+      </div>
+    </div>
+  }
+  <div class="clearfix">
+    <button type="button" class="btn btn-dark shadow float-right" data-toggle="modal" data-target="#exampleModal">
+      Add Lecture
+    </button>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header gradient-primary">
+          <h5 class="modal-title" id="exampleModalLabel">Add Lecture Video</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" asp-action="AddLecture" asp-controller="Course">
+            <input type="hidden" asp-for="Lecture.CourseId" value="@Model.Course.CourseId">
+            <div class="form-row">
+              <div class="col">
+                <span class="text-danger" asp-validation-for="Lecture.LectureTitle"></span>
+                <div class="form-group"><label asp-for="Lecture.LectureTitle"><strong>Lecture Title
+                    </strong></label><input class="form-control" asp-for="Lecture.LectureTitle" placeholder="Title">
+                </div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="col">
+                <span class="text-danger" asp-validation-for="Lecture.LectureVideoURL"></span>
+                <div class="form-group"><label asp-for="Lecture.LectureVideoURL"><strong>Video
+                      URL</strong></label><input class="form-control" asp-for="Lecture.LectureVideoURL"
+                    placeholder="URL">
+                </div>
+              </div>
+              <div class="col">
+                <span class="text-danger" asp-validation-for="Lecture.LectureThumbnailURL"></span>
+                <div class="form-group"><label asp-for="Lecture.LectureThumbnailURL"><strong>Thumbnail
+                      URL</strong></label><input class="form-control" asp-for="Lecture.LectureThumbnailURL"
+                    placeholder="URL"></div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="col">
+                <span class="text-danger" asp-validation-for="Lecture.LectureDescription"></span>
+                <div class="form-group"><label asp-for="Lecture.LectureDescription"><strong>Lecture
+                      Description</strong></label><textarea class="form-control" asp-for="Lecture.LectureDescription"
+                    placeholder="Description"></textarea></div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary shadow" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary shadow">Save changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

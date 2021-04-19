@@ -1,0 +1,87 @@
+@inject UserManager<User> userManager;
+@{
+    var user = @userManager.GetUserAsync(User).Result;
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+@model List<Event>
+<div class="shadow-sm mb-5">
+    <div class="d-sm-flex justify-content-between align-items-center p-3 gradient-primary">
+        <h3>Events</h3>
+        <div>
+        <a href="/dashboard"><button class="btn btn-light shadow mr-2">Dashboard</button></a>
+        @if(User.Identity.IsAuthenticated && (User.IsInRole("Admin") || User.IsInRole("Instructor")))
+                {
+                    <a href="/addevent"><button class="btn btn-light shadow">Create Event</button></a>
+                }
+        </div>
+    </div>
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="text-danger">@ViewBag.ErrorMessage</div>
+            <div class="clearfix">
+                <div class="text-md-right dataTables_filter float-right"><label><input type="search" id="myInput"
+                            class="form-control form-control-sm" aria-controls="dataTable" placeholder="Search"></label>
+                </div>
+            </div>
+            <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
+                <table class="table table-bordered" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>Date and Time</th>
+                            <th>Duration</th>
+                            <th>Event Creator</th>
+                            <th>Description</th>
+                            <th>Meet Link</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="myTable">
+                        @foreach (var activity in Model)
+                        {
+                            <tr>
+                                <td><strong>@activity.EventTitle</strong>
+                                </td>
+                                <td>@activity.StartTime.ToString("dddd, dd MMMM @ hh:mm tt")</td>
+                                <td>@activity.Duration @activity.DurationType</td>
+                                <td>@activity.EventCreator.FirstName @activity.EventCreator.LastName</td>
+                                <td>@activity.Description</td>
+                                <td><a target="_blank" href="@activity.EventLink"><i class="fab fa-google fa-2x"></i></a></td>
+                                @{
+                                    if (user.Id == @activity.EventCreatorId)
+                                    {
+                                        <td><a asp-action="DeleteEvent" asp-controller="Event"
+                                    asp-route-eventId="@activity.EventId"><button
+                                            class="btn-sm btn-dark">Delete</button></a></td>
+                                    }
+                                    else
+                                    {
+                                        var count = 0;
+                                        foreach (var participant in activity.Participants)
+                                        {
+                                            if (participant.UserId == user.Id)
+                                            {
+                                                <td><a asp-action="LeaveEvent" asp-controller="Event"
+                                    asp-route-userId="@user.Id"
+                                    asp-route-eventId="@activity.EventId"><button
+                                            class="btn-sm btn-dark">Leave</button></a></td>
+                                                count++;
+                                            }
+                                        }
+                                        if (count == 0)
+                                        {
+                                            <td><a asp-action="JoinEvent" asp-controller="Event"
+                                    asp-route-userId="@user.Id"
+                                    asp-route-eventId="@activity.EventId"><button
+                                            class="btn-sm btn-dark">Join</button></a></td>
+                                        }
+                                    }
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

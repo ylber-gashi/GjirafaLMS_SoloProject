@@ -1,0 +1,30 @@
+@{
+    ViewData["Title"] = "Create Role";
+}
+@model CreateRoleViewModel
+
+<div class="login-container">
+    <div class="myCard">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="myLeftCtn">
+                    <form class="myForm text-center" method="post">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <header>Create Role</header>
+                        <div class="form-group">
+                            <i class="fas fa-user"></i>
+                            <input class="myInput" asp-for="RoleName" placeholder="Role Name">
+                        </div>
+                        <input type="submit" class="butt" value="Create">
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="myRightCtn">
+                    <img src="https://image.winudf.com/v2/image1/Z2ppcmFmYS5jb21faWNvbl8xNTUzODA4NDUzXzA4MQ/icon.png?w=&fakeurl=1"
+                        id="register-logo" alt="Gjirafa Logo">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

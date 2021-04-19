@@ -1,0 +1,89 @@
+@inject UserManager<User> userManager;
+@{
+    var user = @userManager.GetUserAsync(User).Result;
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+@model Event
+<div class="d-sm-flex justify-content-between align-items-center p-3 gradient-primary">
+    <h3>Create Event</h3>
+    <a href="/dashboard"><button class="btn btn-light shadow">Dashboard</button></a>
+</div>
+<div id="content">
+    <div class="col">
+        <div class="card shadow mb-3">
+            <div class="card-header py-3">
+                <p class="text-primary m-0 font-weight-bold">Event Info</p>
+            </div>
+            <div class="card-body">
+                <form method="POST" asp-action="SaveEvent" asp-controller="Event">
+                    <input type="hidden" asp-for="EventCreatorId" value="@user.Id">
+                    <div class="form-row">
+                        <div class="col">
+                            <span asp-validation-for="EventTitle" class="text-danger"></span>
+                            <div class="form-group">
+                                <label asp-for="EventTitle"><strong>Event Title</strong></label><br>
+                                <input class="form-control" asp-for="EventTitle" placeholder="Event Title">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <span asp-validation-for="StartTime" class="text-danger"></span>
+                            <div class="form-group">
+                                <label asp-for="StartTime"><strong>Start Time</strong></label><br>
+                                <input class="form-control" asp-for="StartTime">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <div class="form-row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label asp-for="Duration"><strong>Duration</strong></label><br>
+                                        <input class="form-control" asp-for="Duration">
+                                        <select class="form-select" aria-label="Default select example"
+                                            asp-for="DurationType">
+                                            <option value="Hours">Hours</option>
+                                            <option value="Minutes">Minutes</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label name="NotificationForUserIds"><strong>Notify Users</strong></label><br>
+                                        <select class="form-select" aria-label="Default select example"
+                                            name="NotificationForUserIds" multiple>
+                                            @foreach (var person in ViewBag.AllUsers)
+                                            {
+                                                <option value="@person.Id">@person.FirstName @person.LastName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <span asp-validation-for="EventLink" class="text-danger"></span>
+                            <div class="form-group">
+                                <label asp-for="EventLink"><strong>Event Link</strong></label><br>
+                                <input class="form-control" asp-for="EventLink"
+                                    placeholder="https://meet.google.com/meetID">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                            <div class="form-group"><label asp-for="Description"><strong>Description</strong></label>
+                                <textarea class="form-control" asp-for="Description"
+                                    placeholder="Description"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group"><button class="btn btn-primary shadow" type="submit">Create Event</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

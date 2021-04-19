@@ -1,0 +1,30 @@
+@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+@model List<Course>
+<div class="shadow-sm mb-5">
+    <section class="article-list bg-white">
+        <div class="d-sm-flex justify-content-between align-items-center p-3 gradient-primary">
+            <h3>All Courses</h3>
+            <div>
+                <a href="/dashboard"><button class="btn btn-light shadow mr-2">Dashboard</button></a>
+                @if(User.Identity.IsAuthenticated && (User.IsInRole("Admin") || User.IsInRole("Instructor")))
+                {
+                    <a href="/createcourse"><button class="btn btn-light shadow">Create Course</button></a>
+                }
+            </div>
+        </div>
+        <div class="container">
+            <div class="row articles">
+                @foreach (var course in Model)
+                {
+                    <div class="col-sm-6 col-md-4 item shadow-sm pb-2"><a href="/course/@course.CourseId"><img class="img-fluid" src="@course.CourseImgURL" /></a>
+                        <a href="/course/@course.CourseId"><h3 class="name">@course.CourseName</h3></a>
+                        <p class="description">@course.CourseDescription</p><a class="action"
+                        href="/course/@course.CourseId"><i class="fa fa-arrow-circle-right"></i></a>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+</div>
